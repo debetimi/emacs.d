@@ -65,8 +65,9 @@
 ;;;; -------------- Clojure --------------
 ;; Enable Paredit Mode
 (require 'smartparens-config)
-(add-hook 'clojure-mode-hook #'smartparens-strict-mode)
-(add-hook 'cider-repl-mode-hook #'smartparens-strict-mode)
+(sp-use-smartparens-bindings)
+(add-hook 'clojure-mode-hook #'smartparens-mode)
+(add-hook 'cider-repl-mode-hook #'smartparens-mode)
 
 ;; Enabling Clojure Refactorings
 (require 'clj-refactor)
@@ -120,7 +121,6 @@
 (smex-auto-update 60)
 (global-set-key (kbd "M-x") 'smex)
 (global-set-key (kbd "M-X") 'smex-major-mode-commands)
-
 (projectile-global-mode)
 
 ;;;; -------------- Random ----------------
@@ -131,7 +131,8 @@
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
    (quote
-    ("11636897679ca534f0dec6f5e3cb12f28bf217a527755f6b9e744bd240ed47e1" default))))
+    ("11636897679ca534f0dec6f5e3cb12f28bf217a527755f6b9e744bd240ed47e1" default)))
+ '(sp-base-key-bindings (quote sp)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
