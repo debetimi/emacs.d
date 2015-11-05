@@ -3,9 +3,9 @@
 (require 'package)
 
 (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
-                         ("marmalade" . "http://marmalade-repo.org/packages/")
-                         ("elpa" . "http://tromey.com/elpa/")
-                         ("melpa" . "http://melpa.milkbox.net/packages/")))
+			 ("marmalade" . "http://marmalade-repo.org/packages/")
+			 ("elpa" . "http://tromey.com/elpa/")
+			 ("melpa" . "http://melpa.milkbox.net/packages/")))
 
 (setq package-list '(
 		     ;; Parens editing mode
@@ -42,19 +42,25 @@
 
 		     ;; Theme
 		     zenburn-theme
+
+		     ;; Text Editor - VIM MODE!!!!!
+		     evil
+
+		     ;; KeyChord for making two button movements act as a command
+		     ;; like jk for Esc in vim
+		     key-chord		     
 		     ))
 (package-initialize)
 
 ;; check if the packages is installed; if not, install it.
-; fetch the list of packages available
+					; fetch the list of packages available
 (unless package-archive-contents
   (or (file-exists-p package-user-dir) (package-refresh-contents)))
 
 
 (dolist (package package-list)
   (unless (package-installed-p package)
-    (if (y-or-n-p (format "Package %s is missing. Install it? " package))
-        (package-install package))))
+    (package-install package)))
 
 
 ;;;;--------- Customizations ----------
@@ -62,19 +68,25 @@
 (when (memq window-system '(mac ns))
   (exec-path-from-shell-initialize))
 
+;; Set option to meta
+(setq mac-option-modifier 'meta)
+
 ;;;; -------------- Clojure --------------
 ;; Enable Paredit Mode
 (require 'smartparens-config)
-(sp-use-smartparens-bindings)
-(add-hook 'clojure-mode-hook #'smartparens-mode)
-(add-hook 'cider-repl-mode-hook #'smartparens-mode)
+(sp-use-paredit-bindings)
+
+(add-hook 'clojure-mode-hook #'smartparens-strict-mode)
+(add-hook 'cider-repl-mode-hook #'smartparens-strict-mode)
+(add-hook 'emacs-lisp-mode-hook #'smartparen-strict-mode)
+(setq sp-autoescape-string-quote t)
 
 ;; Enabling Clojure Refactorings
 (require 'clj-refactor)
 (defun my-clojure-mode-hook ()
-    (clj-refactor-mode 1)
-    (yas-minor-mode 1) ; for adding require/use/import
-    (cljr-add-keybindings-with-prefix "C-c C-m"))
+  (clj-refactor-mode 1)
+  (yas-minor-mode 1) ; for adding require/use/import
+  (cljr-add-keybindings-with-prefix "C-c C-m"))
 
 (add-hook 'clojure-mode-hook #'my-clojure-mode-hook)
 
@@ -86,6 +98,18 @@
 ;; Enable color theme
 (load-theme 'zenburn t)
 
+;;; Line numbers
+(global-linum-mode t)
+
+;; VIM !!!!!1
+(require 'evil)
+(evil-mode 1)
+
+;;; Keymap for VIM
+
+(require 'key-chord)
+(key-chord-mode 1)
+(key-chord-define-global "jk" 'evil-normal-state)
 
 ;;;; --------------- Navigation/Search -----------
 ;; Turn on auto complete globally
@@ -139,3 +163,12 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
+
+;;; Mac specific modification
+(setq mac-option-modifier 'meta)
+(setq mac-command-modifier 'super)
+(setq mac-pass-command-to-system nil)
+
+;;; Save backupfiles in a back up folder so they don't
+;;; clutter workspace
+(setq backup-directory-alist `(("." . "~/.saves")))
